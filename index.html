@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Kiosk Video Loop</title>
     <style>
-        /* Force layout boundaries to stretch true edge-to-edge across screen margins */
         html, body {
             margin: 0;
             padding: 0;
@@ -17,8 +16,6 @@
             justify-content: center;
             align-items: center;
         }
-
-        /* Enforce absolute viewport scaling to stop page compression windows */
         video {
             position: absolute;
             top: 0;
@@ -29,7 +26,6 @@
             background-color: #000000;
             z-index: 1;
         }
-
         * {
             -webkit-touch-callout: none;
             -webkit-user-select: none;
@@ -38,10 +34,6 @@
 </head>
 <body>
 
-    <!-- 
-      - Re-routed video through direct CDN proxy to bypass GitHub Pages MIME type server errors.
-      - Starts muted so browsers guarantee it will autoplay instantly without freezing up.
-    -->
     <video 
         id="kiosk-video"
         controls 
@@ -50,18 +42,14 @@
         muted
         playsinline
         webkit-playsinline>
-        <source src="https://githubusercontent.com" type="video/mp4">
+        <!-- Testing with a standard, web-safe MP4 link -->
+        <source src="https://googleapis.com" type="video/mp4">
         Your browser does not support the video tag.
     </video>
 
     <script>
         const video = document.getElementById('kiosk-video');
-
-        // Prime the player volume to 100%
         video.volume = 1.0;
-
-        // The moment a user interacts with the video controls, trigger the browser's 
-        // playback gesture permission rule to unmute the video at max volume.
         window.addEventListener('click', () => {
             if (video.muted) {
                 video.muted = false;
