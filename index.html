@@ -2,9 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Kiosk Video Loop</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Kiosk Video Player</title>
     <style>
+        /* Establish full display layout framework edge to edge */
         html, body {
             margin: 0;
             padding: 0;
@@ -16,6 +17,8 @@
             justify-content: center;
             align-items: center;
         }
+
+        /* Prevent frame compression boxes or side borders completely */
         video {
             position: absolute;
             top: 0;
@@ -24,8 +27,8 @@
             height: 100%;
             object-fit: contain;
             background-color: #000000;
-            z-index: 1;
         }
+
         * {
             -webkit-touch-callout: none;
             -webkit-user-select: none;
@@ -34,6 +37,10 @@
 </head>
 <body>
 
+    <!-- 
+      - The absolute raw stream reference file.
+      - Autoplay and muted are locked to bypass standard browser security engines instantly.
+    -->
     <video 
         id="kiosk-video"
         controls 
@@ -42,7 +49,6 @@
         muted
         playsinline
         webkit-playsinline>
-        <!-- Testing with a standard, web-safe MP4 link -->
         <source src="https://googleapis.com" type="video/mp4">
         Your browser does not support the video tag.
     </video>
@@ -50,6 +56,8 @@
     <script>
         const video = document.getElementById('kiosk-video');
         video.volume = 1.0;
+
+        // Force audio unmute profile the moment a user interacts anywhere on the player interface
         window.addEventListener('click', () => {
             if (video.muted) {
                 video.muted = false;
