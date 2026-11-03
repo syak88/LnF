@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Kiosk Video Loop</title>
     <style>
-        /* Force layout boundaries to stretch true edge-to-edge across iPad glass margins */
+        /* Force layout boundaries to stretch true edge-to-edge across screen margins */
         html, body {
             margin: 0;
             padding: 0;
@@ -39,8 +39,8 @@
 <body>
 
     <!-- 
-      - Re-routed video through direct CDN proxy to bypass iOS Safari MIME blocks.
-      - Starts muted so iOS/NeatKiosk guarantees it will autoplay instantly without freezing.
+      - Re-routed video through a direct CDN proxy to bypass GitHub Pages MIME type server errors.
+      - Starts muted so browsers guarantee it will autoplay instantly without freezing up.
     -->
     <video 
         id="kiosk-video"
@@ -60,7 +60,7 @@
         // Prime the player volume to 100%
         video.volume = 1.0;
 
-        // The moment a user interacts with the video controls, trigger Apple’s 
+        // The moment a user interacts with the video controls, trigger the browser's 
         // playback gesture permission rule to unmute the video at max volume.
         window.addEventListener('click', () => {
             if (video.muted) {
