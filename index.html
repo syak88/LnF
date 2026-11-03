@@ -2,77 +2,31 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Kiosk Video Loop</title>
     <style>
-        /* Force layout boundaries to stretch true edge-to-edge across iPad glass margins */
+        /* Force a clean, pitch-black kiosk layout with absolutely no scrollbars or margins */
         html, body {
             margin: 0;
             padding: 0;
-            width: 100vw;
-            height: 100vh;
+            width: 100%;
+            height: 100%;
             background-color: #000000;
             overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
         }
 
-        /* Enforce absolute viewport scaling to stop page compression windows */
+        /* Force the video to take up 100% of the screen space while preserving its aspect ratio */
         video {
-            position: absolute;
-            top: 0;
-            left: 0;
             width: 100%;
             height: 100%;
             object-fit: contain;
             background-color: #000000;
-            z-index: 1;
         }
 
-        /* Click overlay */
-        #unmute-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.4);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 100;
-            cursor: pointer;
-            transition: opacity 0.4s ease, visibility 0.4s ease;
-        }
-
-        .unmute-btn {
-            background-color: rgba(255, 255, 255, 0.95);
-            color: #000000;
-            padding: 18px 36px;
-            border-radius: 50px;
-            font-size: 22px;
-            font-weight: 600;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.04); }
-            100% { transform: scale(1); }
-        }
-
-        #unmute-overlay.hidden {
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-        }
-
+        /* Strict prevention against standard callout boxes and UI selections on iOS */
         * {
             -webkit-touch-callout: none;
             -webkit-user-select: none;
@@ -81,12 +35,10 @@
 </head>
 <body>
 
-    <div id="unmute-overlay">
-        <div class="unmute-btn">
-            🔊 Tap to Start with Sound
-        </div>
-    </div>
-
+    <!-- 
+      - Starts muted so iOS/NeatKiosk guarantees it will autoplay instantly without freezing.
+      - Playback controls are fully enabled for the user to seek and pause.
+    -->
     <video 
         id="kiosk-video"
         controls 
@@ -94,31 +46,26 @@
         autoplay 
         muted
         playsinline
-        webkit-playsinline>
-        <!-- Re-routed video through direct CDN proxy to bypass iOS Safari MIME blocks -->
-        <source src="https://jsdelivr.net" type="video/mp4">
+        webkit-playsinline
+        crossorigin="anonymous">
+        <source src="https://github.com" type="video/mp4">
         Your browser does not support the video tag.
     </video>
 
     <script>
         const video = document.getElementById('kiosk-video');
-        const overlay = document.getElementById('unmute-overlay');
 
+        // Prime the player volume to 100%
         video.volume = 1.0;
 
-        function activateKioskAudio() {
-            video.muted = false;
-            video.volume = 1.0;
-            video.play().catch(err => console.log("Playback start wait:", err));
-            overlay.classList.add('hidden');
-        }
-
-        overlay.addEventListener('click', activateKioskAudio);
+        // The moment a user interacts with the video controls, trigger Apple’s 
+        // playback gesture permission rule to unmute the video at max volume.
         window.addEventListener('click', () => {
             if (video.muted) {
-                activateKioskAudio();
+                video.muted = false;
+                video.volume = 1.0;
             }
-        }, { once: true });
+        }, { once: true }); // 'once: true' makes this code run only on the very first touch
     </script>
 
 </body>
